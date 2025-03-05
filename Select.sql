@@ -22,7 +22,14 @@ WHERE name NOT LIKE '% %';
 -- Название треков, где есть "my" или "мой"
 SELECT title
 FROM Tracks
-WHERE title ILIKE '%мой%' OR title ILIKE '%my%';
+WHERE title ILIKE 'my'
+   OR title ILIKE 'мой'
+   OR title ILIKE '% my %'
+   OR title ILIKE '% мой %'
+   OR title ILIKE 'my %'
+   OR title ILIKE 'мой %'
+   OR title ILIKE '% my'
+   OR title ILIKE '% мой';
 
 -- Задание №3
 -- Кол-во исполнителей в жанре
@@ -44,11 +51,14 @@ JOIN Tracks t ON a.id = t.album_id
 GROUP BY a.title;
 
 -- Исполнители без треков в 2020
-SELECT a.name
-FROM Artists a
-LEFT JOIN ArtistAlbum aa ON a.id = aa.artist_id
-LEFT JOIN Albums al ON aa.album_id = al.id AND al.release_year = 2020
-WHERE al.id IS NULL;
+SELECT name
+FROM Artists
+WHERE id NOT IN (
+    SELECT aa.artist_id
+    FROM ArtistAlbum aa
+    JOIN Albums al ON aa.album_id = al.id
+    WHERE al.release_year = 2020
+);
 
 -- Сборники в которых есть треки Billie Eilish
 SELECT DISTINCT c.title
